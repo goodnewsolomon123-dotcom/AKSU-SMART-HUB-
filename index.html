@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>AKSU Smart Hub — Powered by Ox-Bridge Technology</title>
+<meta name="description" content="AKSU Smart Hub — GST Mock Tests and AI Academic Assistant for AKSU Students">
+<meta name="theme-color" content="#006400">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#006400; --green-h:#005000; --green-light:#e8f5e9;
+  --gold:#FFD700; --gold-h:#e6c200; --gold-dark:#b8860b;
+  --navy:#0f2044; --danger:#dc2626; --success:#16a34a;
+  --bg:#f5f7f5; --surface:#ffffff; --surface2:#f8faf8;
+  --border:#d4e0d4; --border2:#b8ccb8;
+  --text:#0f1a0f; --text2:#1a2e1a; --muted:#5a7a5a; --muted2:#8aaa8a;
+  --shadow-sm:0 1px 4px rgba(0,100,0,.08);
+  --shadow-md:0 4px 16px rgba(0,100,0,.12);
+  --shadow-lg:0 8px 32px rgba(0,100,0,.16);
+  --radius:10px; --radius-lg:14px; --radius-xl:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* ══ LOADING ══ */
+#app-loading{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#004d00,#006400,#1a7a1a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s;}
+.load-logo-wrap{width:88px;height:88px;border-radius:20px;background:rgba(255,255,255,.15);border:3px solid rgba(255,215,0,.4);display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.load-logo-text{font-family:'Lora',serif;font-size:2rem;font-weight:700;color:var(--gold);}
+.load-name{font-family:'Lora',serif;font-size:1.3rem;font-weight:700;color:#fff;text-align:center;}
+.load-powered{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px;}
+.spin{width:32px;height:32px;border:3px solid rgba(255,255,255,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ PAGES ══ */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ══ NAVBAR ══ */
+.navbar{background:var(--green);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,100,0,.3);}
+.nav-brand{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.nav-brand-icon{width:34px;height:34px;border-radius:8px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:13px;font-weight:900;color:var(--green);}
+.nav-brand-text{display:flex;flex-direction:column;}
+.nav-brand-name{font-weight:800;font-size:13.5px;color:#fff;line-height:1.1;}
+.nav-brand-sub{font-size:9.5px;color:rgba(255,255,255,.6);font-weight:500;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-user{font-size:12px;color:rgba(255,255,255,.75);font-weight:600;}
+.nav-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:var(--radius);padding:6px 13px;color:#fff;cursor:pointer;font-size:12.5px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all .2s;}
+.nav-btn:hover{background:rgba(255,255,255,.22);}
+
+/* ══ WRAPPER ══ */
+.wrap{max-width:680px;margin:0 auto;padding:22px 16px;}
+
+/* ══ CARDS ══ */
+.card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow-sm);padding:22px;}
+
+/* ══ FORM ══ */
+.inp{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);background:var(--surface2);outline:none;transition:border-color .2s,box-shadow .2s;}
+.inp:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,100,0,.08);}
+.inp::placeholder{color:var(--muted2);}
+select.inp{cursor:pointer;}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.form-label{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;}
+.pass-wrap{position:relative;}
+.pass-wrap .inp{padding-right:46px;}
+.pass-eye{position:absolute;right:13px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--muted);background:none;border:none;padding:4px;display:flex;align-items:center;}
+.pass-eye:hover{color:var(--green);}
+
+/* ══ BUTTONS ══ */
+.btn{padding:12px 22px;border-radius:var(--radius);font-size:14px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;border:none;transition:all .22s;display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(0,100,0,.3);}
+.btn-primary:hover{background:var(--green-h);transform:translateY(-1px);}
+.btn-primary:active{transform:scale(.97);}
+.btn-gold{background:var(--gold);color:var(--green);font-weight:800;}
+.btn-gold:hover{background:var(--gold-h);}
+.btn-ghost{background:var(--surface);color:var(--text2);border:1.5px solid var(--border);}
+.btn-ghost:hover{border-color:var(--green);color:var(--green);}
+.btn-full{width:100%;}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none !important;}
+
+/* ══ BADGE ══ */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;}
+.badge-green{background:var(--green-light);color:var(--green);}
+.badge-red{background:#fee2e2;color:#dc2626;}
+.badge-gold{background:#fef9c3;color:var(--gold-dark);}
+
+/* ══ TOAST ══ */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:11px 22px;border-radius:999px;font-size:13.5px;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;box-shadow:var(--shadow-lg);}
+#toast.show{transform:translateX(-50%) translateY(0);}
+#toast.success{background:var(--success);}
+#toast.error{background:var(--danger);}
+#toast.warning{background:var(--gold-dark);}
+
+/* ══ SKELETON ══ */
+.skel{background:linear-gradient(90deg,#e8f0e8 25%,#f0f7f0 50%,#e8f0e8 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--radius);}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ══ BACK BTN ══ */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--green);cursor:pointer;margin-bottom:14px;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;}
+.back-btn:hover{text-decoration:underline;}
+
+/* ══════════════════════
+   AUTH
+══════════════════════ */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#003300 0%,#006400 55%,#2d8a2d 100%);padding:24px;}
+
+/* ══ LANDING ══ */
+.landing-page{min-height:100vh;position:relative;overflow:hidden;background:linear-gradient(165deg,#002b00 0%,#005a00 45%,#0f7a0f 78%,#1a8a1a 100%);display:flex;flex-direction:column;color:#fff;}
+.landing-blob{position:absolute;border-radius:50%;background:rgba(255,215,0,.10);pointer-events:none;animation:floatY 7s ease-in-out infinite;}
+.landing-blob.b1{width:220px;height:220px;top:-60px;right:-60px;animation-delay:0s;}
+.landing-blob.b2{width:150px;height:150px;bottom:40px;left:-50px;background:rgba(255,255,255,.06);animation-delay:1.2s;animation-duration:9s;}
+.landing-blob.b3{width:90px;height:90px;top:38%;right:8%;background:rgba(255,215,0,.14);animation-delay:2.4s;animation-duration:6s;}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+.landing-top{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;position:relative;z-index:2;}
+.landing-top .auth-logo-icon{width:38px;height:38px;font-size:14px;}
+.landing-skip{font-size:12.5px;font-weight:700;color:rgba(255,255,255,.85);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:7px 15px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.landing-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px 24px 30px;position:relative;z-index:2;}
+.landing-illust{width:150px;height:150px;border-radius:34px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,215,0,.35);display:flex;align-items:center;justify-content:center;margin-bottom:26px;animation:floatY 5s ease-in-out infinite, fadeSlideUp .7s ease both;box-shadow:0 20px 50px rgba(0,0,0,.25);}
+.landing-h1{font-family:'Lora',serif;font-size:1.7rem;font-weight:700;line-height:1.25;margin-bottom:12px;opacity:0;animation:fadeSlideUp .7s ease .15s forwards;}
+.landing-h1 span{color:var(--gold);}
+.landing-sub{font-size:13.5px;color:rgba(255,255,255,.8);line-height:1.7;max-width:380px;margin-bottom:26px;opacity:0;animation:fadeSlideUp .7s ease .3s forwards;}
+.landing-features{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;opacity:0;animation:fadeSlideUp .7s ease .45s forwards;}
+.landing-feature{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:10px 13px;font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:6px;color:#fff;}
+.landing-cta{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;opacity:0;animation:fadeSlideUp .7s ease .6s forwards;}
+.landing-cta .btn-ghost{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.3);}
+.landing-cta .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.landing-foot{text-align:center;font-size:10.5px;color:rgba(255,255,255,.45);padding-bottom:18px;position:relative;z-index:2;}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.auth-card{background:#fff;border-radius:24px;padding:38px 30px;width:100%;max-width:420px;box-shadow:0 24px 64px rgba(0,0,0,.2);}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.auth-logo-icon{width:48px;height:48px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:16px;font-weight:900;color:var(--gold);}
+.auth-logo-text .name{font-family:'Lora',serif;font-size:1.2rem;font-weight:700;color:var(--green);line-height:1.1;}
+.auth-logo-text .powered{font-size:10px;color:var(--muted);}
+.auth-sub{color:var(--muted);font-size:13px;margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.auth-title{font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:18px;color:var(--text);}
+.auth-switch{text-align:center;margin-top:16px;font-size:13px;color:var(--muted);}
+.auth-switch a{color:var(--green);font-weight:700;cursor:pointer;}
+.auth-err{background:#fee2e2;color:var(--danger);padding:10px 14px;border-radius:var(--radius);font-size:13px;font-weight:600;margin-bottom:14px;display:none;}
+
+/* ══════════════════════
+   DASHBOARD
+══════════════════════ */
+.dash-hero{background:linear-gradient(135deg,#004d00,#006400,#1a7a1a);padding:26px 18px;color:#fff;position:relative;overflow:hidden;}
+.dash-hero::after{content:'';position:absolute;top:-30px;right:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,215,0,.08);pointer-events:none;}
+.dash-greeting{font-size:12.5px;opacity:.75;margin-bottom:3px;}
+.dash-name{font-family:'Lora',serif;font-size:1.35rem;font-weight:700;margin-bottom:2px;}
+.dash-dept{font-size:12px;opacity:.65;}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;}
+.dash-stat{background:rgba(255,255,255,.12);border-radius:var(--radius);padding:12px;text-align:center;border:1px solid rgba(255,215,0,.2);}
+.dash-stat-val{font-size:1.35rem;font-weight:800;font-family:'Lora',serif;color:var(--gold);}
+.dash-stat-label{font-size:10px;opacity:.75;margin-top:2px;font-weight:600;letter-spacing:.3px;}
+
+.dash-section{padding:18px 16px 0;font-family:'Lora',serif;font-size:1rem;font-weight:700;color:var(--green);}
+.dash-menu{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 16px 20px;}
+
+.menu-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-xl);padding:20px 16px;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:flex-start;gap:10px;box-shadow:var(--shadow-sm);}
+.menu-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--green);}
+.menu-card:active{transform:scale(.97);}
+.menu-card.wide{grid-column:span 2;}
+.menu-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.menu-title{font-weight:800;font-size:14px;color:var(--text);}
+.menu-desc{font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+/* ══════════════════════
+   COURSES
+══════════════════════ */
+.course-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm);margin-bottom:10px;}
+.course-card:hover{border-color:var(--green);transform:translateX(4px);box-shadow:var(--shadow-md);}
+.course-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11.5px;color:#fff;flex-shrink:0;letter-spacing:-.5px;line-height:1.2;text-align:center;}
+.course-code{font-weight:800;font-size:14px;margin-bottom:2px;color:var(--text);}
+.course-title{font-size:12.5px;color:var(--muted);line-height:1.4;}
+.course-meta{font-size:11px;color:var(--green);font-weight:700;margin-top:3px;}
+
+/* ══════════════════════
+   QUIZ
+══════════════════════ */
+.quiz-header{background:var(--green);padding:14px 18px;color:#fff;position:sticky;top:0;z-index:10;}
+.quiz-course{font-size:11.5px;opacity:.75;margin-bottom:2px;}
+.quiz-title{font-weight:700;font-size:14.5px;}
+.quiz-meta{display:flex;align-items:center;justify-content:space-between;margin-top:8px;}
+.quiz-progress-text{font-size:12px;opacity:.75;}
+.quiz-timer{background:rgba(255,255,255,.15);border-radius:999px;padding:4px 14px;font-size:13px;font-weight:700;border:1px solid rgba(255,215,0,.3);color:var(--gold);}
+.quiz-timer.warn{background:rgba(255,150,0,.3);color:#ffcc00;}
+.quiz-timer.danger{background:rgba(220,38,38,.5);color:#fca5a5;animation:pulse .6s infinite;}
+.voice-toggle-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;width:30px;height:30px;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .2s;}
+.voice-toggle-btn.muted{opacity:.4;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.progress-bar{height:4px;background:rgba(255,255,255,.15);}
+.progress-fill{height:100%;background:var(--gold);transition:width .3s;}
+
+.quiz-body{padding:18px 16px;}
+.q-number{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.q-text{font-size:15px;font-weight:600;line-height:1.75;color:var(--text);margin-bottom:18px;}
+
+.option-btn{width:100%;padding:13px 16px;border-radius:var(--radius-lg);border:2px solid var(--border);background:var(--surface);font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;font-weight:500;text-align:left;cursor:pointer;transition:all .18s;margin-bottom:9px;display:flex;align-items:center;gap:12px;color:var(--text);}
+.option-btn:hover{border-color:var(--green);background:var(--green-light);}
+.option-btn.selected{border-color:var(--green);background:var(--green-light);color:var(--green);font-weight:700;}
+.option-btn.correct{border-color:var(--success);background:#dcfce7;color:var(--success);font-weight:700;}
+.option-btn.wrong{border-color:var(--danger);background:#fee2e2;color:var(--danger);}
+.option-letter{width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;border:1.5px solid var(--border2);}
+.option-btn.selected .option-letter{background:var(--green);color:#fff;border-color:var(--green);}
+.option-btn.correct .option-letter{background:var(--success);color:#fff;border-color:var(--success);}
+.option-btn.wrong .option-letter{background:var(--danger);color:#fff;border-color:var(--danger);}
+.quiz-nav{display:flex;gap:10px;margin-top:18px;padding-bottom:24px;}
+
+/* ══════════════════════
+   RESULTS
+══════════════════════ */
+.result-hero{padding:36px 20px 28px;text-align:center;background:linear-gradient(135deg,#004d00,#006400);color:#fff;}
+.result-score-circle{width:116px;height:116px;border-radius:50%;border:5px solid rgba(255,215,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;background:rgba(255,255,255,.1);}
+.result-pct{font-size:2rem;font-weight:800;font-family:'Lora',serif;color:var(--gold);}
+.result-label{font-size:10.5px;opacity:.7;}
+.result-grade{font-size:1.05rem;font-weight:700;margin-bottom:4px;}
+.result-msg{font-size:12.5px;opacity:.75;}
+.result-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px;}
+.rstat{background:var(--surface);border-radius:var(--radius-lg);padding:14px;text-align:center;border:1px solid var(--border);}
+.rstat-val{font-size:1.25rem;font-weight:800;font-family:'Lora',serif;color:var(--green);}
+.rstat-label{font-size:11px;color:var(--muted);margin-top:2px;font-weight:600;}
+
+.review-item{background:var(--surface);border-radius:var(--radius-lg);padding:16px;margin-bottom:10px;border:1.5px solid var(--border);}
+.review-item.correct-item{border-color:rgba(22,163,74,.3);}
+.review-item.wrong-item{border-color:rgba(220,38,38,.25);}
+.review-q{font-size:13.5px;font-weight:600;line-height:1.7;margin-bottom:10px;}
+.review-answer{font-size:12.5px;padding:7px 12px;border-radius:var(--radius);font-weight:600;margin-bottom:5px;}
+.your-correct{background:#dcfce7;color:var(--success);}
+.your-wrong{background:#fee2e2;color:var(--danger);}
+.correct-ans{background:#dcfce7;color:var(--success);}
+.review-explanation{font-size:12.5px;color:var(--muted);line-height:1.7;padding:10px 12px;background:var(--surface2);border-radius:var(--radius);border-left:3px solid var(--green);margin-top:8px;}
+
+/* ══════════════════════
+   PROFILE
+══════════════════════ */
+.profile-hero{background:linear-gradient(135deg,#004d00,#1a7a1a);padding:30px 18px;color:#fff;text-align:center;}
+.profile-avatar{width:70px;height:70px;border-radius:50%;background:var(--gold);border:3px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.6rem;font-weight:900;color:var(--green);}
+.profile-name{font-family:'Lora',serif;font-size:1.15rem;font-weight:700;margin-bottom:2px;}
+.profile-matric{font-size:11.5px;opacity:.7;background:rgba(255,255,255,.12);display:inline-block;padding:3px 12px;border-radius:999px;margin-top:4px;}
+.history-item{background:var(--surface);border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:9px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.history-course{font-weight:700;font-size:13.5px;margin-bottom:2px;}
+.history-date{font-size:11px;color:var(--muted);}
+.history-pct{font-size:1.15rem;font-weight:800;font-family:'Lora',serif;}
+
+/* ══════════════════════
+   AI ASSISTANT
+══════════════════════ */
+.ai-page-wrap{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.ai-chat-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--bg);}
+.ai-bubble{padding:13px 16px;border-radius:18px;font-size:15px;font-weight:500;line-height:1.85;max-width:90%;animation:msgIn .25s ease;}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ai-bubble.user{background:var(--green);color:#fff;align-self:flex-end;border-radius:18px 18px 4px 18px;font-weight:600;}
+.ai-bubble.bot{background:transparent;border:none;box-shadow:none;align-self:flex-start;border-radius:0;color:var(--text);white-space:pre-wrap;padding:0;font-size:15.5px;font-weight:500;line-height:1.9;max-width:100%;}
+.ai-typing{display:flex;gap:5px;padding:4px 2px;}
+.ai-typing span{width:7px;height:7px;border-radius:50%;background:var(--muted2);animation:dot 1.2s ease-in-out infinite;}
+.ai-typing span:nth-child(2){animation-delay:.2s;}
+.ai-typing span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.ai-input-area{padding:10px 14px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+.ai-input-row{display:flex;gap:8px;align-items:flex-end;}
+.ai-textarea{flex:1;min-height:42px;max-height:110px;padding:10px 13px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-lg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;outline:none;resize:none;transition:border-color .2s;}
+.ai-textarea:focus{border-color:var(--green);}
+.ai-send{width:42px;height:42px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;transition:all .2s;}
+.ai-send:hover{background:var(--green-h);transform:scale(1.08);}
+.quick-prompts{display:flex;gap:7px;flex-wrap:wrap;padding:8px 14px 0;overflow-x:auto;}
+.qp-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:999px;padding:6px 13px;font-size:11.5px;cursor:pointer;color:var(--text2);font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all .18s;white-space:nowrap;flex-shrink:0;}
+.qp-btn:hover{border-color:var(--green);color:var(--green);}
+
+/* ── AI: bold text, thinking, streaming, actions ── */
+.ai-bubble.bot strong{font-weight:800;color:var(--text);}
+.ai-bubble.user{font-weight:600;}
+.ai-bubble.bot{position:relative;}
+.ai-thinking{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:14px;font-weight:600;font-style:italic;}
+.stream-cursor{display:inline-block;width:2px;height:16px;background:var(--green);margin-left:2px;vertical-align:middle;animation:blink .85s step-start infinite;border-radius:1px;}
+@keyframes blink{50%{opacity:0}}
+.ai-msg-wrap{display:flex;flex-direction:column;align-self:flex-start;max-width:100%;width:100%;}
+.ai-msg-wrap .ai-bubble{max-width:100%;}
+.ai-msg-actions{display:flex;gap:3px;margin-top:8px;padding-left:2px;opacity:0;transition:opacity .2s;}
+.ai-msg-wrap:hover .ai-msg-actions,.ai-msg-actions.show{opacity:1;}
+.ai-action-btn{background:none;border:none;cursor:pointer;color:var(--muted2);padding:5px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ai-action-btn:hover{background:var(--green-light);color:var(--green);}
+.ai-action-btn.active-up{color:var(--success);}
+.ai-action-btn.active-down{color:var(--danger);}
+.ai-action-btn.speaking{color:var(--green);background:var(--green-light);}
+
+/* ══════════════════════
+   FEEDBACK
+══════════════════════ */
+.stars{display:flex;gap:10px;justify-content:center;margin:14px 0 6px;}
+.star{font-size:2.2rem;cursor:pointer;transition:transform .15s;opacity:.25;color:var(--gold);}
+.star.active{opacity:1;}
+.star:hover{transform:scale(1.2);}
+
+/* ══ ANIMATIONS ══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .35s ease forwards;}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="app-loading">
+  <div class="load-logo-wrap"><div class="load-logo-text">SH</div></div>
+  <div class="load-name">AKSU Smart Hub</div>
+  <div class="load-powered">Powered by Ox-Bridge Technology</div>
+  <div class="spin" style="margin-top:16px;"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- PWA INSTALL BANNER -->
+<div id="pwa-install-banner" style="display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9998;background:var(--navy);color:#fff;padding:12px 14px;border-radius:16px;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:92vw;border:1px solid rgba(255,215,0,.25);">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:34px;height:34px;border-radius:9px;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="17" height="17" fill="none" stroke="var(--gold)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+    </div>
+    <div style="font-size:12.5px;font-weight:600;line-height:1.4;">Install AKSU Smart Hub for quick, offline-ready access</div>
+    <button onclick="installPwa()" style="background:var(--gold);color:var(--green);border:none;border-radius:8px;padding:8px 14px;font-weight:800;font-size:12px;cursor:pointer;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif;">Install</button>
+    <button onclick="dismissInstallBanner()" style="background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;padding:4px;flex-shrink:0;display:flex;">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     LANDING
+══════════════════════════════════ -->
+<div id="page-landing" class="page">
+  <div class="landing-page">
+    <div class="landing-blob b1"></div>
+    <div class="landing-blob b2"></div>
+    <div class="landing-blob b3"></div>
+
+    <div class="landing-top">
+      <div class="auth-logo" style="margin:0;">
+        <div class="auth-logo-icon">SH</div>
+        <div class="auth-logo-text">
+          <div class="name" style="color:#fff;font-size:1rem;">AKSU Smart Hub</div>
+        </div>
+      </div>
+      <button class="landing-skip" onclick="go('page-login')">Login</button>
+    </div>
+
+    <div class="landing-body">
+      <div class="landing-illust">
+        <svg width="72" height="72" fill="none" stroke="var(--gold)" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="M22 10L12 5 2 10l10 5 10-5z"/>
+          <path d="M6 12v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5"/>
+          <path d="M22 10v6"/>
+        </svg>
+      </div>
+      <div class="landing-h1">Welcome to <span>AKSU Smart Hub</span></div>
+      <p class="landing-sub">Your all-in-one study companion for Akwa Ibom State University — practice GST mock exams under real CBT conditions, generate instant AI practice quizzes on any topic, and get round-the-clock help from your personal AI academic assistant.</p>
+
+      <div class="landing-features">
+        <div class="landing-feature"><svg width="13" height="13" fill="none" stroke="var(--gold)" stroke-width="2.2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg> GST Mock CBT</div>
+        <div class="landing-feature"><svg width="13" height="13" fill="none" stroke="var(--gold)" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg> AI Practice Quiz</div>
+        <div class="landing-feature"><svg width="13" height="13" fill="none" stroke="var(--gold)" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h1v6M14 9h1v6M9 12h6"/></svg> AI Assistant</div>
+      </div>
+
+      <div class="landing-cta">
+        <button class="btn btn-gold btn-full" onclick="go('page-register')">Get Started — It's Free</button>
+        <button class="btn btn-ghost btn-full" onclick="go('page-login')">I already have an account</button>
+      </div>
+    </div>
+
+    <div class="landing-foot">Powered by Ox-Bridge Technology</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     LOGIN
+══════════════════════════════════ -->
+<div id="page-login" class="page">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">SH</div>
+        <div class="auth-logo-text">
+          <div class="name">AKSU Smart Hub</div>
+          <div class="powered">Powered by Ox-Bridge Technology</div>
+        </div>
+      </div>
+      <p class="auth-sub">Akwa Ibom State University · Student Portal</p>
+      <div class="auth-title">Login to your account</div>
+      <div class="auth-err" id="login-err"></div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input id="li-user" class="inp" placeholder="Enter your username" autocomplete="username">
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">Password</label>
+        <div class="pass-wrap">
+          <input id="li-pass" class="inp" type="password" placeholder="Enter your password" autocomplete="current-password">
+          <button class="pass-eye" onclick="togglePass('li-pass','eye-li')" type="button">
+            <svg id="eye-li" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" id="login-btn" onclick="doLogin()">Login</button>
+      <div class="auth-switch">New student? <a onclick="go('page-register')">Create account</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     REGISTER
+══════════════════════════════════ -->
+<div id="page-register" class="page">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">SH</div>
+        <div class="auth-logo-text">
+          <div class="name">AKSU Smart Hub</div>
+          <div class="powered">Powered by Ox-Bridge Technology</div>
+        </div>
+      </div>
+      <p class="auth-sub">Akwa Ibom State University · Student Portal</p>
+      <div class="auth-title">Create your account</div>
+      <div class="auth-err" id="reg-err"></div>
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input id="reg-name" class="inp" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input id="reg-user" class="inp" placeholder="Choose a username (no spaces)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Matric Number (optional)</label>
+        <input id="reg-matric" class="inp" placeholder="e.g. AKSU/2022/EDU/001 — leave blank if none">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Department</label>
+        <select id="reg-dept" class="inp">
+          <option value="">-- Select Department --</option>
+          <option>Philosophy</option>
+          <option>Political Science & Public Administration</option>
+          <option>Business Administration</option>
+          <option>Accounting</option>
+          <option>Economics</option>
+          <option>Mass Communication</option>
+          <option>English & Literary Studies</option>
+          <option>History & International Studies</option>
+          <option>Sociology & Anthropology</option>
+          <option>Computer Science</option>
+          <option>Biochemistry</option>
+          <option>Microbiology</option>
+          <option>Agricultural Science</option>
+          <option>Education</option>
+          <option>Law</option>
+          <option>Medicine & Surgery</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Level</label>
+        <select id="reg-level" class="inp">
+          <option>100 Level</option>
+          <option>200 Level</option>
+          <option>300 Level</option>
+          <option>400 Level</option>
+          <option>500 Level</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">Password</label>
+        <div class="pass-wrap">
+          <input id="reg-pass" class="inp" type="password" placeholder="Choose a strong password">
+          <button class="pass-eye" onclick="togglePass('reg-pass','eye-reg')" type="button">
+            <svg id="eye-reg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" id="reg-btn" onclick="doRegister()">Create Account</button>
+      <div class="auth-switch">Already have an account? <a onclick="go('page-login')">Login here</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DASHBOARD
+══════════════════════════════════ -->
+<div id="page-dashboard" class="page">
+  <div class="navbar">
+    <div class="nav-brand">
+      <div class="nav-brand-icon">SH</div>
+      <div class="nav-brand-text">
+        <div class="nav-brand-name">AKSU Smart Hub</div>
+        <div class="nav-brand-sub">Powered by Ox-Bridge Technology</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-user" id="dash-user"></span>
+      <button class="nav-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="dash-hero">
+    <div class="dash-greeting" id="dash-greeting">Good morning,</div>
+    <div class="dash-name" id="dash-name">Student</div>
+    <div class="dash-dept" id="dash-dept"></div>
+    <div class="dash-stats">
+      <div class="dash-stat">
+        <div class="dash-stat-val" id="ds-tests">—</div>
+        <div class="dash-stat-label">Tests</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-val" id="ds-best">—</div>
+        <div class="dash-stat-label">Best Score</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-stat-val" id="ds-avg">—</div>
+        <div class="dash-stat-label">Average</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-section">Quick Access</div>
+  <div class="dash-menu">
+    <div class="menu-card wide" onclick="go('page-courses')">
+      <div class="menu-icon" style="background:#e8f5e9;">
+        <svg width="24" height="24" fill="none" stroke="#006400" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </div>
+      <div class="menu-title">GST Mock CBT</div>
+      <div class="menu-desc">Practice GST courses with real questions, timer and instant scoring.</div>
+    </div>
+    <div class="menu-card" onclick="go('page-ai')">
+      <div class="menu-icon" style="background:#f0f4ff;">
+        <svg width="24" height="24" fill="none" stroke="#1d4ed8" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h1v6M14 9h1v6M9 12h6"/></svg>
+      </div>
+      <div class="menu-title">AI Assistant</div>
+      <div class="menu-desc">Research, projects and academic help.</div>
+    </div>
+    <div class="menu-card" onclick="go('page-ai-quiz')">
+      <div class="menu-icon" style="background:#ede9fe;">
+        <svg width="24" height="24" fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </div>
+      <div class="menu-title">AI Practice Quiz</div>
+      <div class="menu-desc">Type any GST topic and AI generates 5 practice questions instantly.</div>
+    </div>
+    <div class="menu-card wide" onclick="go('page-feedback')">
+      <div class="menu-icon" style="background:#fef9c3;">
+        <svg width="24" height="24" fill="none" stroke="#b8860b" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <div class="menu-title">Send Feedback</div>
+      <div class="menu-desc">Rate the app and suggest improvements to help us grow.</div>
+    </div>
+    <div class="menu-card wide" onclick="go('page-about')">
+      <div class="menu-icon" style="background:#e8f5e9;">
+        <svg width="24" height="24" fill="none" stroke="#006400" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div class="menu-title">About AKSU Smart Hub</div>
+      <div class="menu-desc">Learn about the app, version info and the team behind it.</div>
+    </div>
+    <div class="menu-card wide" onclick="go('page-profile')">
+      <div class="menu-icon" style="background:#f0fdf4;">
+        <svg width="24" height="24" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="menu-title">My Profile</div>
+      <div class="menu-desc">Test history and performance.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     AI QUIZ PAGE
+══════════════════════════════════ -->
+<div id="page-ai-quiz" class="page">
+  <div class="navbar">
+    <div class="nav-brand" onclick="go('page-dashboard')">
+      <div class="nav-brand-icon">SH</div>
+      <div class="nav-brand-text"><div class="nav-brand-name">AI Practice Quiz</div></div>
+    </div>
+  </div>
+
+  <!-- SETUP VIEW -->
+  <div id="aiq-setup" class="wrap">
+    <button class="back-btn" onclick="go('page-dashboard')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </button>
+    <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;margin-bottom:6px;">AI Practice Quiz</div>
+    <p style="font-size:13.5px;color:var(--muted);margin-bottom:24px;">Type any GST topic or course and the AI will generate 5 practice questions for you instantly.</p>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div class="form-group" style="margin-bottom:12px;">
+        <label class="form-label">GST Course</label>
+        <select id="aiq-course" class="inp" style="margin:0;">
+          <option value="GST111">GST 111 — Use of English I</option>
+          <option value="GST112">GST 112 — Nigerian Peoples & Culture</option>
+          <option value="GST113">GST 113 — Logic & Philosophy</option>
+          <option value="GST121">GST 121 — Communication in English</option>
+          <option value="GST211">GST 211 — History & Philosophy of Science</option>
+          <option value="GST222">GST 222 — Entrepreneurship</option>
+          <option value="GST223">GST 223 — Environment & Sustainable Development</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">Specific Topic (optional)</label>
+        <input id="aiq-topic" class="inp" placeholder="e.g. Summary Writing, Photosynthesis, Logic..." style="margin:0;">
+      </div>
+      <button class="btn btn-primary btn-full" id="aiq-start-btn" onclick="startAiQuiz()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+        Generate Quiz
+      </button>
+    </div>
+
+    <!-- Quick topic chips -->
+    <div style="margin-bottom:10px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;">Quick topics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <button class="qp-btn" onclick="quickAiQuiz('Summary Writing','GST111')">Summary Writing</button>
+      <button class="qp-btn" onclick="quickAiQuiz('Formal Letter','GST111')">Formal Letter</button>
+      <button class="qp-btn" onclick="quickAiQuiz('Nigerian History','GST112')">Nigerian History</button>
+      <button class="qp-btn" onclick="quickAiQuiz('Logic and Arguments','GST113')">Logic & Arguments</button>
+      <button class="qp-btn" onclick="quickAiQuiz('Entrepreneurship','GST222')">Entrepreneurship</button>
+      <button class="qp-btn" onclick="quickAiQuiz('Environmental Pollution','GST223')">Env. Pollution</button>
+      <button class="qp-btn" onclick="quickAiQuiz('Scientific Method','GST211')">Scientific Method</button>
+      <button class="qp-btn" onclick="quickAiQuiz('Business Plan','GST222')">Business Plan</button>
+    </div>
+  </div>
+
+  <!-- LOADING VIEW -->
+  <div id="aiq-loading" style="display:none;text-align:center;padding:80px 24px;">
+    <div style="width:60px;height:60px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+      <svg width="28" height="28" fill="none" stroke="var(--green)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+    </div>
+    <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;margin-bottom:8px;">Generating your quiz...</div>
+    <p style="color:var(--muted);font-size:13.5px;">AI is creating 5 questions on <strong id="aiq-loading-topic"></strong></p>
+  </div>
+
+  <!-- QUIZ ACTIVE VIEW -->
+  <div id="aiq-active" style="display:none;">
+    <div class="quiz-header">
+      <div class="quiz-course" id="aiq-q-course"></div>
+      <div class="quiz-title" id="aiq-q-topic-title"></div>
+      <div class="quiz-meta">
+        <div class="quiz-progress-text" id="aiq-progress-text">1 / 5</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="voice-toggle-btn" id="aiq-voice-toggle" onclick="toggleAiqVoice()" title="Toggle read-aloud">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" id="aiq-voice-icon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+          </button>
+          <div class="quiz-timer" id="aiq-timer">20s</div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="aiq-progress-bar" style="width:20%"></div></div>
+
+    <div class="quiz-body">
+      <div class="q-number" id="aiq-q-num"></div>
+      <div class="q-text" id="aiq-q-text"></div>
+      <div id="aiq-options"></div>
+
+      <!-- Explanation (shows after answering) -->
+      <div id="aiq-expl-wrap" style="display:none;margin-top:16px;padding:14px;background:var(--green-light);border-radius:var(--radius-lg);border-left:4px solid var(--green);">
+        <div style="font-weight:700;font-size:13px;color:var(--green);margin-bottom:6px;">Explanation</div>
+        <div id="aiq-expl-text" style="font-size:13.5px;color:var(--text2);line-height:1.75;"></div>
+      </div>
+
+      <div class="quiz-nav" style="margin-top:18px;">
+        <button class="btn btn-primary" id="aiq-next-btn" onclick="aiqNext()" style="flex:1;display:none;">Next Question</button>
+        <button class="btn btn-gold" id="aiq-finish-btn" onclick="aiqFinish()" style="display:none;flex:1;">See Results</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS VIEW -->
+  <div id="aiq-results" style="display:none;">
+    <div class="result-hero">
+      <div class="result-score-circle">
+        <div class="result-pct" id="aiq-res-pct">0%</div>
+        <div class="result-label">Score</div>
+      </div>
+      <div class="result-grade" id="aiq-res-grade"></div>
+      <div class="result-msg" id="aiq-res-msg"></div>
+    </div>
+    <div class="result-stats">
+      <div class="rstat"><div class="rstat-val" id="aiq-correct">0</div><div class="rstat-label">Correct</div></div>
+      <div class="rstat"><div class="rstat-val" id="aiq-wrong">0</div><div class="rstat-label">Wrong</div></div>
+      <div class="rstat"><div class="rstat-val">5</div><div class="rstat-label">Total</div></div>
+    </div>
+    <div style="padding:0 16px 24px;">
+      <div style="display:flex;gap:10px;margin-bottom:20px;">
+        <button class="btn btn-primary" onclick="retryAiQuiz()" style="flex:1;">Try Again</button>
+        <button class="btn btn-ghost" onclick="go('page-dashboard')" style="flex:1;">Dashboard</button>
+      </div>
+      <div style="font-family:'Lora',serif;font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--green);">Answer Review</div>
+      <div id="aiq-review"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     COURSES
+══════════════════════════════════ -->
+<div id="page-courses" class="page">
+  <div class="navbar">
+    <div class="nav-brand" onclick="go('page-dashboard')">
+      <div class="nav-brand-icon">SH</div>
+      <div class="nav-brand-text"><div class="nav-brand-name">GST Mock CBT</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <button class="back-btn" onclick="go('page-dashboard')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </button>
+    <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;margin-bottom:4px;">Select a Course</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Choose a GST course to begin your 30-minute mock test</p>
+    <div id="courses-list">
+      <div class="skel" style="height:74px;margin-bottom:10px;"></div>
+      <div class="skel" style="height:74px;margin-bottom:10px;"></div>
+      <div class="skel" style="height:74px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     QUIZ
+══════════════════════════════════ -->
+<div id="page-quiz" class="page">
+  <div class="quiz-header">
+    <div class="quiz-course" id="qz-course-label"></div>
+    <div class="quiz-title" id="qz-course-title"></div>
+    <div class="quiz-meta">
+      <div class="quiz-progress-text" id="qz-progress-text"></div>
+      <div class="quiz-timer" id="qz-timer">18:00</div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="qz-progress-bar" style="width:0%"></div></div>
+  <div class="quiz-body">
+    <div class="q-number" id="qz-q-num"></div>
+    <div class="q-text" id="qz-q-text"></div>
+    <div id="qz-options"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-ghost" id="qz-prev-btn" onclick="qzPrev()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Prev
+      </button>
+      <button class="btn btn-primary" id="qz-next-btn" onclick="qzNext()" style="flex:1;">Next
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="btn btn-gold" id="qz-submit-btn" onclick="qzSubmit()" style="display:none;flex:1;">Submit Test</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     RESULTS
+══════════════════════════════════ -->
+<div id="page-results" class="page">
+  <div class="result-hero">
+    <div class="result-score-circle">
+      <div class="result-pct" id="res-pct">0%</div>
+      <div class="result-label">Your Score</div>
+    </div>
+    <div class="result-grade" id="res-grade"></div>
+    <div class="result-msg" id="res-msg"></div>
+  </div>
+  <div class="result-stats">
+    <div class="rstat"><div class="rstat-val" id="res-correct">0</div><div class="rstat-label">Correct</div></div>
+    <div class="rstat"><div class="rstat-val" id="res-wrong">0</div><div class="rstat-label">Wrong</div></div>
+    <div class="rstat"><div class="rstat-val" id="res-time">—</div><div class="rstat-label">Time Used</div></div>
+  </div>
+  <div style="padding:0 16px 24px;">
+    <div style="display:flex;gap:10px;margin-bottom:20px;">
+      <button class="btn btn-primary" onclick="go('page-courses')" style="flex:1;">Try Another</button>
+      <button class="btn btn-ghost" onclick="go('page-dashboard')" style="flex:1;">Dashboard</button>
+    </div>
+    <div style="font-family:'Lora',serif;font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--green);">Answer Review</div>
+    <div id="res-review"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     PROFILE
+══════════════════════════════════ -->
+<div id="page-profile" class="page">
+  <div class="navbar">
+    <div class="nav-brand" onclick="go('page-dashboard')">
+      <div class="nav-brand-icon">SH</div>
+      <div class="nav-brand-text"><div class="nav-brand-name">My Profile</div></div>
+    </div>
+  </div>
+  <div class="profile-hero">
+    <div class="profile-avatar" id="pf-avatar">S</div>
+    <div class="profile-name" id="pf-name"></div>
+    <div class="profile-matric" id="pf-matric"></div>
+    <div style="font-size:12px;opacity:.7;margin-top:6px;" id="pf-dept"></div>
+  </div>
+  <div style="padding:14px 16px;">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+      <div class="rstat"><div class="rstat-val" id="pf-tests">—</div><div class="rstat-label">Tests</div></div>
+      <div class="rstat"><div class="rstat-val" id="pf-best">—</div><div class="rstat-label">Best</div></div>
+      <div class="rstat"><div class="rstat-val" id="pf-avg">—</div><div class="rstat-label">Average</div></div>
+    </div>
+    <div style="font-family:'Lora',serif;font-size:1rem;font-weight:700;margin-bottom:12px;color:var(--green);">Test History</div>
+    <div id="pf-history"><div class="skel" style="height:56px;margin-bottom:9px;"></div><div class="skel" style="height:56px;"></div></div>
+    <div style="margin-top:18px;"><button class="btn btn-ghost btn-full" onclick="go('page-dashboard')">Back to Dashboard</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     AI ASSISTANT
+══════════════════════════════════ -->
+<div id="page-ai" class="page">
+  <div class="ai-page-wrap">
+    <div class="navbar">
+      <div class="nav-brand">
+        <div class="nav-brand-icon">AI</div>
+        <div class="nav-brand-text">
+          <div class="nav-brand-name">AI Academic Assistant</div>
+          <div class="nav-brand-sub">Powered by Ox-Bridge Technology</div>
+        </div>
+      </div>
+      <div class="nav-right">
+        <button class="nav-btn" onclick="clearAiChat()">New Chat</button>
+        <button class="nav-btn" onclick="go('page-dashboard')">← Back</button>
+      </div>
+    </div>
+
+    <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;" id="ai-quick-wrap">
+      <div class="quick-prompts" style="padding:0;">
+        <button class="qp-btn" onclick="aiPrompt('Explain research methodology for my project')">Research Methods</button>
+        <button class="qp-btn" onclick="aiPrompt('Help me understand GST 111 Use of English topics')">GST 111 Help</button>
+        <button class="qp-btn" onclick="aiPrompt('Suggest research topics for undergraduate students')">Research Topics</button>
+        <button class="qp-btn" onclick="aiPrompt('How do I write a good project chapter one introduction?')">Project Writing</button>
+        <button class="qp-btn" onclick="aiPrompt('Explain APA referencing format with examples')">APA Format</button>
+        <button class="qp-btn" onclick="aiPrompt('What is the difference between qualitative and quantitative research?')">Research Types</button>
+      </div>
+    </div>
+
+    <div class="ai-chat-area" id="ai-chat-area">
+      <div class="ai-bubble bot">Hello! I am your AKSU Smart Hub AI Academic Assistant 🎓
+
+I can help you with:
+• GST course explanations and past question tips
+• Research methodology and project writing
+• Drafting chapter outlines and introductions
+• APA, MLA and Harvard referencing formats
+• Brainstorming research topics for your department
+
+What do you need help with today?</div>
+    </div>
+
+    <div class="ai-input-area">
+      <div class="ai-input-row">
+        <textarea id="ai-msg" class="ai-textarea" rows="1" placeholder="Ask anything about your studies... (Enter for new line)"></textarea>
+        <button class="ai-send" onclick="sendAiMsg()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div style="font-size:10.5px;color:var(--muted2);margin-top:6px;text-align:center;">Powered by Ox-Bridge Technology · For academic guidance only</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     FEEDBACK
+══════════════════════════════════ -->
+<div id="page-feedback" class="page">
+  <div class="navbar">
+    <div class="nav-brand" onclick="go('page-dashboard')">
+      <div class="nav-brand-icon">SH</div>
+      <div class="nav-brand-text"><div class="nav-brand-name">Feedback</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <button class="back-btn" onclick="go('page-dashboard')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </button>
+    <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;margin-bottom:4px;">Send Feedback</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Help us improve AKSU Smart Hub for all students</p>
+    <div class="card">
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-weight:700;font-size:14px;margin-bottom:3px;">How would you rate this app?</div>
+        <div style="font-size:12.5px;color:var(--muted);">Tap a star to rate</div>
+      </div>
+      <div class="stars" id="stars-row">
+        <span class="star" onclick="setRating(1)">★</span>
+        <span class="star" onclick="setRating(2)">★</span>
+        <span class="star" onclick="setRating(3)">★</span>
+        <span class="star" onclick="setRating(4)">★</span>
+        <span class="star" onclick="setRating(5)">★</span>
+      </div>
+      <div id="rating-label" style="text-align:center;font-size:13.5px;font-weight:700;color:var(--green);min-height:20px;margin-bottom:16px;"></div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">Message (optional)</label>
+        <textarea id="fb-msg" class="inp" style="min-height:90px;" placeholder="Tell us what you love or what we can improve..."></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" id="fb-btn" onclick="submitFeedback()">Submit Feedback</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     ABOUT
+══════════════════════════════════ -->
+<div id="page-about" class="page">
+  <div class="navbar">
+    <div class="nav-brand" onclick="go('page-dashboard')">
+      <div class="nav-brand-icon">SH</div>
+      <div class="nav-brand-text"><div class="nav-brand-name">About</div></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <button class="back-btn" onclick="go('page-dashboard')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Dashboard
+    </button>
+
+    <!-- App identity -->
+    <div class="card" style="text-align:center;padding:32px 24px;margin-bottom:16px;">
+      <div style="width:80px;height:80px;border-radius:20px;background:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 8px 24px rgba(0,100,0,.25);">
+        <span style="font-family:'Lora',serif;font-size:1.8rem;font-weight:900;color:var(--gold);">SH</span>
+      </div>
+      <div style="font-family:'Lora',serif;font-size:1.3rem;font-weight:700;color:var(--green);margin-bottom:4px;">AKSU Smart Hub</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px;">Powered by Ox-Bridge Technology</div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <span class="badge badge-green">Version 1.0</span>
+        <span class="badge badge-gold">Beta</span>
+        <span class="badge badge-green">Free</span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-weight:700;font-size:14px;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        About This App
+      </div>
+      <p style="font-size:13.5px;color:var(--muted);line-height:1.85;">
+        AKSU Smart Hub is a free academic platform built specifically for students of <strong>Akwa Ibom State University (AKSU)</strong>. It helps you prepare for GST exams, get AI-powered academic assistance, and track your progress — all from your phone.
+      </p>
+    </div>
+
+    <!-- Features -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-weight:700;font-size:14px;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Features
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:9px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" fill="none" stroke="#006400" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div><div style="font-weight:700;font-size:13.5px;margin-bottom:2px;">GST Mock CBT</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;">Practice GST 111, 112, 113, 121, 211, 222, 223 with real timed tests and instant scoring.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:9px;background:#e8f0ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" fill="none" stroke="#1d4ed8" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <div><div style="font-weight:700;font-size:13.5px;margin-bottom:2px;">AI Academic Assistant</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;">Get help with research methodology, project writing, referencing and academic topics.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:9px;background:#fef9c3;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" fill="none" stroke="#b8860b" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div><div style="font-weight:700;font-size:13.5px;margin-bottom:2px;">Performance Tracking</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;">Track your test scores, best performance and improvement over time.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:36px;height:36px;border-radius:9px;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <div><div style="font-weight:700;font-size:13.5px;margin-bottom:2px;">Secure Accounts</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;">Your data is safe with encrypted passwords and private student accounts.</div></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;">
+        <div style="width:36px;height:36px;border-radius:9px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" fill="none" stroke="#006400" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+        </div>
+        <div><div style="font-weight:700;font-size:13.5px;margin-bottom:2px;">Mobile Friendly</div><div style="font-size:12.5px;color:var(--muted);line-height:1.6;">Designed for your phone — works perfectly on any Android or iPhone.</div></div>
+      </div>
+    </div>
+
+    <!-- GST Courses -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-weight:700;font-size:14px;color:var(--green);margin-bottom:12px;">Available GST Courses</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span style="background:var(--green-light);color:var(--green);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">GST 111 — Use of English I</span>
+        <span style="background:var(--green-light);color:var(--green);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">GST 112 — Nigerian Peoples & Culture</span>
+        <span style="background:var(--green-light);color:var(--green);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">GST 113 — Logic & Philosophy</span>
+        <span style="background:var(--green-light);color:var(--green);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">GST 121 — Communication in English</span>
+        <span style="background:var(--green-light);color:var(--green);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">GST 211 — History & Philosophy of Science</span>
+        <span style="background:var(--green-light);color:var(--green);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">GST 222 — Entrepreneurship</span>
+        <span style="background:var(--green-light);color:var(--green);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;">GST 223 — Environment & Sustainable Development</span>
+      </div>
+    </div>
+
+    <!-- Built by -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-weight:700;font-size:14px;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Built By
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--green),#1d4ed8);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem;flex-shrink:0;">G</div>
+        <div>
+          <div style="font-weight:700;font-size:14px;">Goodnews Solomon</div>
+          <div style="font-size:12.5px;color:var(--muted);">Ox-Bridge Technology · Nigeria 🇳🇬</div>
+          <div style="font-size:12px;color:var(--green);font-weight:600;margin-top:2px;">ox-bridgelearninghub.com.ng</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div style="background:#fef9c3;border:1px solid #fde68a;border-radius:var(--radius-lg);padding:16px;margin-bottom:20px;">
+      <div style="font-weight:700;font-size:13px;color:var(--gold-dark);margin-bottom:6px;">⚠️ Academic Disclaimer</div>
+      <p style="font-size:12.5px;color:#92400e;line-height:1.7;">The AI Academic Assistant is a study tool to support your learning. Students remain fully responsible for reviewing and verifying all AI-generated content before submission. This app is not affiliated with AKSU official academic systems.</p>
+    </div>
+
+    <button class="btn btn-primary btn-full" onclick="go('page-dashboard')" style="margin-bottom:24px;">Back to Dashboard</button>
+  </div>
+</div>
+
+<script>
+const API = 'https://ox-bridge-learning.onrender.com';
+let CU = null;
+let quizQuestions=[], quizAnswers={}, quizCurrent=0;
+let quizTimer=null, quizSeconds=1080, quizStartTime=null;
+let quizCourseCode='', quizCourseTitle='';
+let currentRating=0;
+
+// ── Navigation
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById(id);
+  if(p) p.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='page-dashboard') loadDashboard();
+  if(id==='page-courses')   loadCourses();
+  if(id==='page-profile')   loadProfile();
+}
+
+// ── Toast
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='show '+type;
+  setTimeout(()=>t.className='',2800);
+}
+
+// ── Greeting
+function getGreeting(){
+  const h=new Date().getHours();
+  return h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+}
+
+// ── Password toggle
+function togglePass(inputId, iconId){
+  const inp=document.getElementById(inputId);
+  const isPass=inp.type==='password';
+  inp.type=isPass?'text':'password';
+  const icon=document.getElementById(iconId);
+  icon.innerHTML=isPass
+    ?'<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    :'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+}
+
+// ── Auth
+async function doLogin(){
+  const username=document.getElementById('li-user').value.trim();
+  const password=document.getElementById('li-pass').value.trim();
+  const errEl=document.getElementById('login-err');
+  const btn=document.getElementById('login-btn');
+  errEl.style.display='none';
+  if(!username||!password){errEl.textContent='Please fill all fields';errEl.style.display='block';return;}
+  btn.disabled=true; btn.textContent='Logging in...';
+  try{
+    const r=await fetch(`${API}/campus/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+    const d=await r.json();
+    if(r.ok){
+      CU=d; localStorage.setItem('aksu_hub_user',JSON.stringify(d));
+      toast('Welcome, '+d.full_name.split(' ')[0]+'!','success');
+      go('page-dashboard');
+    }else{errEl.textContent=d.detail||'Invalid username or password';errEl.style.display='block';}
+  }catch(e){errEl.textContent='Connection error. Please check your internet.';errEl.style.display='block';}
+  finally{btn.disabled=false;btn.textContent='Login';}
+}
+
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const user=document.getElementById('reg-user').value.trim();
+  const matric=document.getElementById('reg-matric').value.trim();
+  const dept=document.getElementById('reg-dept').value;
+  const level=document.getElementById('reg-level').value;
+  const pass=document.getElementById('reg-pass').value.trim();
+  const errEl=document.getElementById('reg-err');
+  const btn=document.getElementById('reg-btn');
+  errEl.style.display='none';
+  if(!name||!user||!dept||!pass){errEl.textContent='Please fill all required fields';errEl.style.display='block';return;}
+  if(pass.length<6){errEl.textContent='Password must be at least 6 characters';errEl.style.display='block';return;}
+  btn.disabled=true; btn.textContent='Creating account...';
+  try{
+    const r=await fetch(`${API}/campus/register`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,full_name:name,matric_number:matric,department:dept,level,password:pass})});
+    const d=await r.json();
+    if(r.ok){
+      toast('Account created! Please login.','success');
+      document.getElementById('li-user').value=user;
+      go('page-login');
+    }else{errEl.textContent=d.detail||'Registration failed. Username or matric may already exist.';errEl.style.display='block';}
+  }catch(e){errEl.textContent='Connection error. Please check your internet.';errEl.style.display='block';}
+  finally{btn.disabled=false;btn.textContent='Create Account';}
+}
+
+function doLogout(){
+  CU=null; localStorage.removeItem('aksu_hub_user');
+  go('page-login'); toast('Logged out successfully');
+}
+
+// ── Dashboard
+async function loadDashboard(){
+  if(!CU) return;
+  document.getElementById('dash-user').textContent=CU.username;
+  document.getElementById('dash-greeting').textContent=getGreeting()+',';
+  document.getElementById('dash-name').textContent=CU.full_name;
+  document.getElementById('dash-dept').textContent=(CU.department||'')+(CU.level?' · '+CU.level:'');
+  try{
+    const r=await fetch(`${API}/campus/profile/${CU.username}`);
+    const d=await r.json();
+    document.getElementById('ds-tests').textContent=d.total_tests_taken||0;
+    document.getElementById('ds-best').textContent=(d.highest_percentage||0)+'%';
+    document.getElementById('ds-avg').textContent=(d.average_percentage||0)+'%';
+  }catch(e){}
+}
+
+// ── Courses
+const COURSE_COLORS={GST111:'#006400',GST112:'#0d9488',GST113:'#7c3aed',GST121:'#d97706',GST122:'#dc2626',GST123:'#0284c7',GST211:'#1d4ed8',GST221:'#b45309',GST222:'#0891b2',GST223:'#059669'};
+
+async function loadCourses(){
+  const list=document.getElementById('courses-list');
+  list.innerHTML='<div class="skel" style="height:74px;margin-bottom:10px;"></div><div class="skel" style="height:74px;margin-bottom:10px;"></div><div class="skel" style="height:74px;"></div>';
+  try{
+    const r=await fetch(`${API}/campus/gst/courses`);
+    const d=await r.json();
+    const courses=d.courses||[];
+    if(!courses.length){list.innerHTML='<div class="card" style="text-align:center;padding:40px;color:var(--muted);">No courses available yet.</div>';return;}
+    list.innerHTML=courses.map(c=>`
+      <div class="course-card fade-up" onclick="startQuiz('${c.course_code}','${c.course_title.replace(/'/g,"\\'")}')">
+        <div class="course-icon" style="background:${COURSE_COLORS[c.course_code]||'#006400'};">${c.course_code.replace('GST','')}</div>
+        <div style="flex:1;">
+          <div class="course-code">${c.course_code}</div>
+          <div class="course-title">${c.course_title}</div>
+          <div class="course-meta">30 Questions · 30 Minutes · Shuffle</div>
+        </div>
+        <svg width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`).join('');
+  }catch(e){list.innerHTML='<div class="card" style="color:var(--danger);padding:20px;text-align:center;">Could not load courses. Check your internet connection.</div>';}
+}
+
+// ── Quiz
+async function startQuiz(code,title){
+  quizCourseCode=code; quizCourseTitle=title;
+  quizAnswers={}; quizCurrent=0; quizSeconds=1080;
+  quizStartTime=Date.now();
+  if(quizTimer) clearInterval(quizTimer);
+  document.getElementById('qz-course-label').textContent=code;
+  document.getElementById('qz-course-title').textContent=title;
+  go('page-quiz');
+  try{
+    const r=await fetch(`${API}/campus/gst/questions/${code}`);
+    const d=await r.json();
+    quizQuestions=d.questions||d||[];
+    if(!quizQuestions.length){toast('No questions found for this course','warning');go('page-courses');return;}
+    renderQuestion();
+    startTimer();
+  }catch(e){toast('Could not load questions. Check your internet.','error');go('page-courses');}
+}
+
+function renderQuestion(){
+  const q=quizQuestions[quizCurrent];
+  const total=quizQuestions.length;
+  document.getElementById('qz-q-num').textContent=`Question ${quizCurrent+1} of ${total}`;
+  document.getElementById('qz-q-text').textContent=q.question_text;
+  document.getElementById('qz-progress-text').textContent=`${quizCurrent+1} / ${total}`;
+  document.getElementById('qz-progress-bar').style.width=((quizCurrent+1)/total*100)+'%';
+  const chosen=quizAnswers[q.id];
+  const opts=[{l:'A',t:q.option_a},{l:'B',t:q.option_b},{l:'C',t:q.option_c},{l:'D',t:q.option_d}];
+  document.getElementById('qz-options').innerHTML=opts.map(o=>`
+    <button class="option-btn ${chosen===o.l?'selected':''}" onclick="selectOption('${o.l}')">
+      <div class="option-letter">${o.l}</div>
+      <span>${o.t}</span>
+    </button>`).join('');
+  document.getElementById('qz-prev-btn').style.display=quizCurrent===0?'none':'flex';
+  document.getElementById('qz-next-btn').style.display=quizCurrent===total-1?'none':'flex';
+  document.getElementById('qz-submit-btn').style.display=quizCurrent===total-1?'flex':'none';
+}
+
+function selectOption(letter){
+  quizAnswers[quizQuestions[quizCurrent].id]=letter;
+  renderQuestion();
+}
+function qzNext(){if(quizCurrent<quizQuestions.length-1){quizCurrent++;renderQuestion();window.scrollTo(0,0);}}
+function qzPrev(){if(quizCurrent>0){quizCurrent--;renderQuestion();window.scrollTo(0,0);}}
+
+function startTimer(){
+  if(quizTimer) clearInterval(quizTimer);
+  quizTimer=setInterval(()=>{
+    quizSeconds--;
+    const m=Math.floor(quizSeconds/60),s=quizSeconds%60;
+    const el=document.getElementById('qz-timer');
+    el.textContent=`${m}:${s.toString().padStart(2,'0')}`;
+    el.className='quiz-timer';
+    if(quizSeconds<=300) el.classList.add('warn');
+    if(quizSeconds<=60)  el.classList.add('danger');
+    if(quizSeconds<=0){clearInterval(quizTimer);toast('Time is up! Submitting...','warning');qzSubmit();}
+  },1000);
+}
+
+async function qzSubmit(){
+  clearInterval(quizTimer);
+  const timeTaken=Math.round((Date.now()-quizStartTime)/1000);
+  const unanswered=quizQuestions.length-Object.keys(quizAnswers).length;
+  if(unanswered>0){if(!confirm(`You have ${unanswered} unanswered question${unanswered>1?'s':''}. Submit anyway?`)){startTimer();return;}}
+  try{
+    const r=await fetch(`${API}/campus/gst/submit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:CU.username,course_code:quizCourseCode,answers:quizAnswers,time_taken:timeTaken})});
+    const d=await r.json();
+    if(r.ok) showResults(d,timeTaken);
+    else toast('Submission failed. Try again.','error');
+  }catch(e){toast('Submission failed. Check your internet.','error');}
+}
+
+function showResults(data,timeTaken){
+  go('page-results');
+  const pct=Math.round(data.percentage);
+  document.getElementById('res-pct').textContent=pct+'%';
+  document.getElementById('res-correct').textContent=data.score;
+  document.getElementById('res-wrong').textContent=data.total-data.score;
+  const m=Math.floor(timeTaken/60),s=timeTaken%60;
+  document.getElementById('res-time').textContent=m>0?`${m}m ${s}s`:`${s}s`;
+  let grade,msg;
+  if(pct>=70){grade='Excellent! 🎉';msg='Outstanding performance! Keep it up.';}
+  else if(pct>=60){grade='Good Job! 👍';msg='Great work! Keep studying.';}
+  else if(pct>=50){grade='You Passed! 📚';msg='Good effort. Study harder for better results.';}
+  else{grade='Keep Practising 💪';msg='Do not give up. Practice makes perfect.';}
+  document.getElementById('res-grade').textContent=grade;
+  document.getElementById('res-msg').textContent=msg;
+  document.getElementById('res-review').innerHTML=(data.results||[]).map((r,i)=>`
+    <div class="review-item ${r.is_correct?'correct-item':'wrong-item'}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span class="badge ${r.is_correct?'badge-green':'badge-red'}">${r.is_correct?'✓ Correct':'✗ Wrong'}</span>
+        <span style="font-size:11.5px;color:var(--muted);">Q${i+1}</span>
+      </div>
+      <div class="review-q">${r.question_text}</div>
+      <div class="review-answer ${r.is_correct?'your-correct':'your-wrong'}">Your answer: ${r.chosen_answer||'Not answered'}</div>
+      ${!r.is_correct?`<div class="review-answer correct-ans">Correct answer: ${r.correct_answer}</div>`:''}
+      ${r.explanation?`<div class="review-explanation">${r.explanation}</div>`:''}
+    </div>`).join('');
+}
+
+// ── Profile
+async function loadProfile(){
+  if(!CU) return;
+  document.getElementById('pf-avatar').textContent=CU.full_name[0].toUpperCase();
+  document.getElementById('pf-name').textContent=CU.full_name;
+  document.getElementById('pf-matric').textContent=CU.matric_number||'—';
+  document.getElementById('pf-dept').textContent=(CU.department||'')+(CU.level?' · '+CU.level:'');
+  try{
+    const r=await fetch(`${API}/campus/profile/${CU.username}`);
+    const d=await r.json();
+    document.getElementById('pf-tests').textContent=d.total_tests_taken||0;
+    document.getElementById('pf-best').textContent=(d.highest_percentage||0)+'%';
+    document.getElementById('pf-avg').textContent=(d.average_percentage||0)+'%';
+    if(d.last_test){
+      document.getElementById('pf-history').innerHTML=`
+        <div class="history-item">
+          <div>
+            <div class="history-course">${d.last_test.course_code}</div>
+            <div class="history-date">Last test · ${d.last_test.taken_at||'Recently'}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="history-pct" style="color:${d.last_test.percentage>=50?'var(--green)':'var(--danger)'}">${Math.round(d.last_test.percentage)}%</div>
+            <div style="font-size:11.5px;color:var(--muted);">${d.last_test.score}/${d.last_test.total}</div>
+          </div>
+        </div>`;
+    }else{
+      document.getElementById('pf-history').innerHTML='<div class="card" style="text-align:center;padding:28px;color:var(--muted);">No tests taken yet. Start practising!</div>';
+    }
+  }catch(e){document.getElementById('pf-history').innerHTML='<p style="color:var(--danger);">Could not load history.</p>';}
+}
+
+// ── AI Assistant — FIXED
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function formatAiText(raw){
+  let safe = escapeHtml(raw);
+  safe = safe.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  return safe;
+}
+function streamText(el, raw, area){
+  return new Promise(resolve=>{
+    let i=0;
+    const step = raw.length>500?4:raw.length>200?2:1;
+    const speed = raw.length>500?10:16;
+    (function tick(){
+      i+=step;
+      const chunk = raw.slice(0, i);
+      el.innerHTML = formatAiText(chunk) + '<span class="stream-cursor"></span>';
+      area.scrollTop = area.scrollHeight;
+      if(i<raw.length){
+        setTimeout(tick, speed);
+      }else{
+        el.innerHTML = formatAiText(raw);
+        resolve();
+      }
+    })();
+  });
+}
+function buildBotWrap(rawText){
+  const wrap=document.createElement('div');
+  wrap.className='ai-msg-wrap';
+  const bubble=document.createElement('div');
+  bubble.className='ai-bubble bot';
+  wrap.appendChild(bubble);
+  const actions=document.createElement('div');
+  actions.className='ai-msg-actions';
+  actions.innerHTML=`
+    <button class="ai-action-btn" title="Copy" onclick="copyAiMessage(this)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    </button>
+    <button class="ai-action-btn" title="Read aloud" onclick="speakAiMessage(this)">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    </button>
+    <button class="ai-action-btn" title="Good response" onclick="rateAiMessage(this,'up')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/></svg>
+    </button>
+    <button class="ai-action-btn" title="Poor response" onclick="rateAiMessage(this,'down')">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/></svg>
+    </button>`;
+  wrap.appendChild(actions);
+  wrap.dataset.raw = rawText;
+  return {wrap, bubble, actions};
+}
+function copyAiMessage(btn){
+  const wrap=btn.closest('.ai-msg-wrap');
+  const raw=wrap?.dataset.raw||'';
+  navigator.clipboard.writeText(raw).then(()=>toast('Copied to clipboard','success'));
+}
+function speakAiMessage(btn){
+  if(!window.speechSynthesis){toast('Voice playback is not supported in this browser','warning');return;}
+  const wrap=btn.closest('.ai-msg-wrap');
+  const raw=(wrap?.dataset.raw||'').replace(/\*\*/g,'');
+  const isSpeaking = btn.classList.contains('speaking');
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.ai-action-btn.speaking').forEach(b=>b.classList.remove('speaking'));
+  if(isSpeaking) return;
+  const utter = new SpeechSynthesisUtterance(raw);
+  utter.rate = 1;
+  utter.pitch = 1;
+  utter.onstart = ()=>btn.classList.add('speaking');
+  utter.onend = ()=>btn.classList.remove('speaking');
+  utter.onerror = ()=>btn.classList.remove('speaking');
+  window.speechSynthesis.speak(utter);
+}
+function rateAiMessage(btn, val){
+  const actions=btn.closest('.ai-msg-actions');
+  actions.querySelectorAll('.ai-action-btn').forEach(b=>{if(b!==btn){b.classList.remove('active-up','active-down');}});
+  btn.classList.toggle(val==='up'?'active-up':'active-down');
+  toast(val==='up'?'Thanks for your feedback! 🙏':'Thanks — we\'ll work on that','success');
+}
+
+let aiChatHistory = [];
+function persistAiChat(){
+  try{ localStorage.setItem('aksu_ai_history', JSON.stringify(aiChatHistory)); }catch(e){}
+}
+function restoreAiChat(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('aksu_ai_history')||'[]');
+    if(!Array.isArray(saved) || !saved.length) return;
+    aiChatHistory = saved;
+    const area = document.getElementById('ai-chat-area');
+    area.innerHTML='';
+    saved.forEach(entry=>{
+      if(entry.role==='user'){
+        const ub=document.createElement('div');
+        ub.className='ai-bubble user';
+        ub.textContent=entry.text;
+        area.appendChild(ub);
+      }else{
+        const {wrap, bubble} = buildBotWrap(entry.text);
+        bubble.innerHTML = formatAiText(entry.text);
+        area.appendChild(wrap);
+      }
+    });
+    const qp=document.getElementById('ai-quick-wrap');
+    if(qp) qp.style.display='none';
+    area.scrollTop = area.scrollHeight;
+  }catch(e){}
+}
+function clearAiChat(){
+  aiChatHistory = [];
+  localStorage.removeItem('aksu_ai_history');
+  document.getElementById('ai-chat-area').innerHTML = `<div class="ai-bubble bot">Hello! I am your AKSU Smart Hub AI Academic Assistant 🎓
+
+I can help you with:
+• GST course explanations and past question tips
+• Research methodology and project writing
+• Drafting chapter outlines and introductions
+• APA, MLA and Harvard referencing formats
+• Brainstorming research topics for your department
+
+What do you need help with today?</div>`;
+  const qp=document.getElementById('ai-quick-wrap');
+  if(qp) qp.style.display='block';
+  toast('Started a new chat','success');
+}
+
+async function sendAiMsg(){
+  const ta=document.getElementById('ai-msg');
+  const msg=ta.value.trim();
+  if(!msg) return;
+  const area=document.getElementById('ai-chat-area');
+  const qp=document.getElementById('ai-quick-wrap');
+  if(qp) qp.style.display='none';
+
+  const ub=document.createElement('div');
+  ub.className='ai-bubble user';
+  ub.textContent=msg;
+  area.appendChild(ub);
+  ta.value=''; ta.style.height='auto';
+  area.scrollTop=area.scrollHeight;
+  aiChatHistory.push({role:'user', text:msg});
+  persistAiChat();
+
+  const typing=document.createElement('div');
+  typing.className='ai-bubble bot';
+  typing.innerHTML='<div class="ai-thinking"><div class="ai-typing"><span></span><span></span><span></span></div>Thinking…</div>';
+  area.appendChild(typing);
+  area.scrollTop=area.scrollHeight;
+
+  try{
+    const r=await fetch(`${API}/ai/chat`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        username: 'campus_ai_user',
+        message: msg,
+        subject: 'University Academic Studies',
+        level: 'SSS'
+      })
+    });
+    const text = await r.text();
+    let d;
+    try{ d = JSON.parse(text); }
+    catch(e){ throw new Error('Invalid response from server'); }
+    typing.remove();
+
+    const rawResponse = d.response || d.message || d.detail || 'No response received. Please try again.';
+    const {wrap, bubble} = buildBotWrap(rawResponse);
+    area.appendChild(wrap);
+    area.scrollTop=area.scrollHeight;
+    await streamText(bubble, rawResponse, area);
+    aiChatHistory.push({role:'assistant', text:rawResponse});
+    persistAiChat();
+  }catch(e){
+    typing.remove();
+    const eb=document.createElement('div');
+    eb.className='ai-bubble bot';
+    eb.style.color='var(--danger)';
+    eb.textContent='Could not reach AI. The server may be starting up — please wait 30 seconds and try again.';
+    area.appendChild(eb);
+    area.scrollTop=area.scrollHeight;
+  }
+}
+
+function aiPrompt(text){
+  document.getElementById('ai-msg').value=text;
+  sendAiMsg();
+}
+
+// ── Feedback
+const RATING_LABELS=['','Poor 😞','Fair 😐','Good 😊','Very Good 😄','Excellent! 🎉'];
+function setRating(n){
+  currentRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('active',i<n));
+  document.getElementById('rating-label').textContent=RATING_LABELS[n];
+}
+
+async function submitFeedback(){
+  if(!currentRating){toast('Please select a star rating first','warning');return;}
+  const msg=document.getElementById('fb-msg').value.trim();
+  const btn=document.getElementById('fb-btn');
+  btn.disabled=true; btn.textContent='Sending...';
+  try{
+    const r=await fetch(`${API}/campus/feedback`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:CU?.username||'anonymous',rating:currentRating,message:msg})});
+    if(r.ok){toast('Thank you for your feedback! 🙏','success');document.getElementById('fb-msg').value='';setRating(0);setTimeout(()=>go('page-dashboard'),1500);}
+    else toast('Could not submit feedback. Try again.','error');
+  }catch(e){toast('Connection error.','error');}
+  finally{btn.disabled=false;btn.textContent='Submit Feedback';}
+}
+
+// ── Keyboard
+document.getElementById('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('reg-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
+document.getElementById('ai-msg').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,110)+'px';});
+
+// ══════════════════════════════════════════
+// AI QUIZ
+// ══════════════════════════════════════════
+let aiqQuestions=[], aiqCurrent=0, aiqScore=0, aiqAnswered=false;
+let aiqCourseName='', aiqTopicName='';
+let aiqTimerInterval=null, aiqSecondsLeft=20, aiqVoiceOn=true;
+
+function toggleAiqVoice(){
+  aiqVoiceOn = !aiqVoiceOn;
+  const btn = document.getElementById('aiq-voice-toggle');
+  const icon = document.getElementById('aiq-voice-icon');
+  icon.innerHTML = aiqVoiceOn
+    ? '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/>'
+    : '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+  btn.classList.toggle('muted', !aiqVoiceOn);
+  if(!aiqVoiceOn) window.speechSynthesis?.cancel();
+  else if(aiqQuestions[aiqCurrent]) speakAiqQuestion(aiqQuestions[aiqCurrent]);
+}
+
+function speakAiqQuestion(q){
+  if(!aiqVoiceOn || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const optsText = (q.options||[]).map(o=>o.replace(/^[A-D]\)\s*/,'')).join('. ');
+  const utter = new SpeechSynthesisUtterance(`${q.question}. Options: ${optsText}`);
+  utter.rate = 0.95;
+  window.speechSynthesis.speak(utter);
+}
+
+function updateAiqTimerDisplay(){
+  const el = document.getElementById('aiq-timer');
+  if(!el) return;
+  el.textContent = aiqSecondsLeft + 's';
+  el.classList.remove('warn','danger');
+  if(aiqSecondsLeft<=5) el.classList.add('danger');
+  else if(aiqSecondsLeft<=10) el.classList.add('warn');
+}
+
+function startAiqTimer(){
+  clearInterval(aiqTimerInterval);
+  aiqSecondsLeft = 20;
+  updateAiqTimerDisplay();
+  aiqTimerInterval = setInterval(()=>{
+    aiqSecondsLeft--;
+    updateAiqTimerDisplay();
+    if(aiqSecondsLeft<=0){
+      clearInterval(aiqTimerInterval);
+      if(!aiqAnswered) aiqAnswer('', null);
+    }
+  },1000);
+}
+
+function quickAiQuiz(topic, course){
+  document.getElementById('aiq-topic').value = topic;
+  document.getElementById('aiq-course').value = course;
+  startAiQuiz();
+}
+
+async function startAiQuiz(){
+  const course = document.getElementById('aiq-course').value;
+  const topic  = document.getElementById('aiq-topic').value.trim() || course;
+  const courseSelect = document.getElementById('aiq-course');
+  aiqCourseName = courseSelect.options[courseSelect.selectedIndex].text;
+  aiqTopicName  = topic;
+
+  // Show loading
+  document.getElementById('aiq-setup').style.display   = 'none';
+  document.getElementById('aiq-loading').style.display  = 'block';
+  document.getElementById('aiq-active').style.display   = 'none';
+  document.getElementById('aiq-results').style.display  = 'none';
+  document.getElementById('aiq-loading-topic').textContent = topic;
+
+  const btn = document.getElementById('aiq-start-btn');
+  btn.disabled = true;
+
+  try{
+    const r = await fetch(`${API}/quiz/${encodeURIComponent(topic)}?subject=${encodeURIComponent(course)}&level=University`);
+    const d = await r.json();
+    const questions = d.quiz || [];
+
+    if(!questions.length){
+      toast('Could not generate quiz. Try a different topic.','warning');
+      document.getElementById('aiq-setup').style.display  = 'block';
+      document.getElementById('aiq-loading').style.display = 'none';
+      btn.disabled = false;
+      return;
+    }
+
+    aiqQuestions = questions;
+    aiqCurrent   = 0;
+    aiqScore     = 0;
+    aiqAnswered  = false;
+
+    document.getElementById('aiq-loading').style.display = 'none';
+    document.getElementById('aiq-active').style.display  = 'block';
+    document.getElementById('aiq-q-course').textContent  = course;
+    document.getElementById('aiq-q-topic-title').textContent = topic;
+    renderAiqQuestion();
+
+  }catch(e){
+    toast('Connection error. Check your internet.','error');
+    document.getElementById('aiq-setup').style.display   = 'block';
+    document.getElementById('aiq-loading').style.display = 'none';
+  }
+  finally{ btn.disabled = false; }
+}
+
+function renderAiqQuestion(){
+  const q     = aiqQuestions[aiqCurrent];
+  const total = aiqQuestions.length;
+  aiqAnswered = false;
+
+  document.getElementById('aiq-q-num').textContent      = `Question ${aiqCurrent+1} of ${total}`;
+  document.getElementById('aiq-q-text').textContent     = q.question;
+  document.getElementById('aiq-progress-text').textContent = `${aiqCurrent+1} / ${total}`;
+  document.getElementById('aiq-progress-bar').style.width  = ((aiqCurrent+1)/total*100)+'%';
+  document.getElementById('aiq-expl-wrap').style.display   = 'none';
+  document.getElementById('aiq-next-btn').style.display    = 'none';
+  document.getElementById('aiq-finish-btn').style.display  = 'none';
+
+  // Render options — handle both "A) text" and plain text formats
+  const opts = q.options || [];
+  const letters = ['A','B','C','D'];
+  document.getElementById('aiq-options').innerHTML = opts.map((opt,i) => {
+    const letter  = letters[i] || String.fromCharCode(65+i);
+    const display = opt.replace(/^[A-D]\)\s*/,'');
+    return `
+      <button class="option-btn" onclick="aiqAnswer('${letter}',this)">
+        <div class="option-letter">${letter}</div>
+        <span>${display}</span>
+      </button>`;
+  }).join('');
+  window.scrollTo(0,0);
+  startAiqTimer();
+  speakAiqQuestion(q);
+}
+
+function aiqAnswer(chosen, btn){
+  if(aiqAnswered) return;
+  aiqAnswered = true;
+  clearInterval(aiqTimerInterval);
+  window.speechSynthesis?.cancel();
+
+  const q      = aiqQuestions[aiqCurrent];
+  const correct = (q.answer||'').toUpperCase().replace(/[^A-D]/g,'');
+  const isRight = chosen === correct;
+  if(isRight) aiqScore++;
+
+  // Colour all options
+  document.querySelectorAll('#aiq-options .option-btn').forEach(b => {
+    const letter = b.querySelector('.option-letter').textContent.trim();
+    if(letter === correct){
+      b.classList.add('correct');
+    } else if(letter === chosen && !isRight){
+      b.classList.add('wrong');
+    }
+    b.style.pointerEvents = 'none';
+  });
+
+  // Show explanation
+  if(q.explanation){
+    document.getElementById('aiq-expl-text').textContent = q.explanation;
+    document.getElementById('aiq-expl-wrap').style.display = 'block';
+  }
+
+  // Show next or finish
+  const isLast = aiqCurrent === aiqQuestions.length-1;
+  if(isLast){
+    document.getElementById('aiq-finish-btn').style.display = 'flex';
+  } else {
+    document.getElementById('aiq-next-btn').style.display = 'flex';
+  }
+}
+
+function aiqNext(){
+  aiqCurrent++;
+  renderAiqQuestion();
+}
+
+function aiqFinish(){
+  clearInterval(aiqTimerInterval);
+  window.speechSynthesis?.cancel();
+  document.getElementById('aiq-active').style.display  = 'none';
+  document.getElementById('aiq-results').style.display = 'block';
+
+  const total = aiqQuestions.length;
+  const pct   = Math.round((aiqScore/total)*100);
+  document.getElementById('aiq-res-pct').textContent   = pct+'%';
+  document.getElementById('aiq-correct').textContent   = aiqScore;
+  document.getElementById('aiq-wrong').textContent     = total-aiqScore;
+
+  let grade, msg;
+  if(pct>=80){grade='Excellent! 🎉';msg='Outstanding! You really know this topic.';}
+  else if(pct>=60){grade='Good Job! 👍';msg='Well done! Keep practising.';}
+  else if(pct>=40){grade='Keep Going 📚';msg='Not bad! Review the explanations and try again.';}
+  else{grade='Try Again 💪';msg='Study the topic more and retry. You will improve!';}
+  document.getElementById('aiq-res-grade').textContent = grade;
+  document.getElementById('aiq-res-msg').textContent   = msg;
+
+  // Review
+  const letters = ['A','B','C','D'];
+  document.getElementById('aiq-review').innerHTML = aiqQuestions.map((q,i) => {
+    const correct = (q.answer||'').toUpperCase().replace(/[^A-D]/g,'');
+    const correctText = (q.options||[]).find(o=>o.toUpperCase().startsWith(correct))||correct;
+    return `
+      <div class="review-item ${i<aiqScore?'correct-item':'wrong-item'}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span class="badge badge-green">Q${i+1}</span>
+        </div>
+        <div class="review-q">${q.question}</div>
+        <div class="review-answer correct-ans">Correct: ${correctText.replace(/^[A-D]\)\s*/,'')}</div>
+        ${q.explanation?`<div class="review-explanation">${q.explanation}</div>`:''}
+      </div>`;
+  }).join('');
+  window.scrollTo(0,0);
+}
+
+function retryAiQuiz(){
+  clearInterval(aiqTimerInterval);
+  window.speechSynthesis?.cancel();
+  document.getElementById('aiq-results').style.display = 'none';
+  document.getElementById('aiq-setup').style.display   = 'block';
+  window.scrollTo(0,0);
+}
+
+// ── Init
+// ══════════════════════════════════════════
+// PWA — install prompt + service worker
+// ══════════════════════════════════════════
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  if (!localStorage.getItem('aksu_pwa_dismissed')) {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'flex';
+  }
+});
+
+function installPwa(){
+  const banner = document.getElementById('pwa-install-banner');
+  if (!deferredInstallPrompt) { if (banner) banner.style.display = 'none'; return; }
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(() => {
+    if (banner) banner.style.display = 'none';
+    deferredInstallPrompt = null;
+  });
+}
+
+function dismissInstallBanner(){
+  const banner = document.getElementById('pwa-install-banner');
+  if (banner) banner.style.display = 'none';
+  localStorage.setItem('aksu_pwa_dismissed', '1');
+}
+
+window.addEventListener('appinstalled', () => {
+  const banner = document.getElementById('pwa-install-banner');
+  if (banner) banner.style.display = 'none';
+  toast('App installed! Launch it from your home screen anytime.', 'success');
+});
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+window.addEventListener('load',()=>{
+  restoreAiChat();
+  setTimeout(()=>{
+    const load=document.getElementById('app-loading');
+    load.style.opacity='0';
+    setTimeout(()=>load.style.display='none',400);
+    const saved=localStorage.getItem('aksu_hub_user');
+    if(saved){try{CU=JSON.parse(saved);go('page-dashboard');}catch(e){go('page-landing');}}
+    else go('page-landing');
+  },1400);
+});
+</script>
+</body>
+</html>
